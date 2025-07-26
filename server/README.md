@@ -14,18 +14,22 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    ```bash
    npm install
    ```
-2. Configure the database URL in `.env`:
+2. Configure environment variables in `.env` (see `.env.example`):
    ```env
    DATABASE_URL=postgres://user:pass@localhost:5432/linora
    JWT_SECRET=supersecret
    EMAIL_FROM=no-reply@linora.com
    ```
-3. Generate Prisma client and migrate:
+3. Generate Prisma client and run the initial migration:
    ```bash
    npx prisma generate
    npx prisma migrate dev --name init
    ```
-4. Start the development server:
+4. Generate the Prisma client before starting the server:
+   ```bash
+   npx prisma generate
+   ```
+5. Start the development server:
    ```bash
    npm run dev
    ```
