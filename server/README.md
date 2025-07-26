@@ -8,6 +8,8 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
 - File uploads via `multer` (configure in `productController` as needed).
 - PostgreSQL schema defined in `prisma/schema.prisma`.
 - Email verification with token links.
+- Security middleware via `helmet` and `csurf`.
+- Centralized error handling to prevent unexpected request failures.
 
 ## Setup
 1. Install dependencies:
@@ -29,3 +31,6 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    ```bash
    npm run dev
    ```
+
+The server uses centralized error handlers so unexpected errors return a
+JSON response instead of crashing.
