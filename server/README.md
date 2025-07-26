@@ -24,6 +24,7 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    ```bash
    npx prisma generate
    npx prisma migrate dev --name init
+   npx prisma migrate dev --name add-user-order-fields
    ```
 4. Start the development server:
    ```bash
