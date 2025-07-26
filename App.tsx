@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Homepage } from './components/Homepage';
 import { TajiraDashboard } from './components/TajiraDashboard';
@@ -7,6 +7,7 @@ import { TajiraStore } from './components/TajiraStore';
 import { ModelDashboard } from './components/ModelDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLandingPage } from './components/AdminLandingPage';
+import { ModelLandingPage } from './components/ModelLandingPage';
 import { ShopCustomizer } from './components/ShopCustomizer';
 import { AuthPage } from './components/AuthPage';
 
@@ -17,6 +18,12 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [userType, setUserType] = useState<UserType>('buyer');
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Set to false to show auth page
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
+  }, []);
 
   // Mock user data based on userType
   const getUserData = () => {
@@ -48,8 +55,7 @@ export default function App() {
           case 'tajira':
             return <TajiraLandingPage />;
           case 'model':
-            // TODO: Create ModelLandingPage in future
-            return <Homepage />; // For now, show regular homepage
+            return <ModelLandingPage />;
           default:
             return <Homepage />; // Regular shopping page for buyers
         }

@@ -42,6 +42,17 @@ Indices are automatically handled by Prisma for foreign keys and unique constrai
 ## File Uploads
 Use `multer` middleware to handle product and profile image uploads. Store images in a cloud bucket (e.g., S3) and save URLs in the database.
 
+## Security Enhancements
+- Global rate limiter via `express-rate-limit` protects the API from abuse.
+- Sessions managed with `express-session` for additional security layers on top of JWT.
+
+## Notifications & Payments
+- `/api/notifications` endpoint allows sending simple alerts (extendable to push services).
+- `/api/payments/create` handles initiating checkout sessions with a provider.
+
+## PWA Support
+- `manifest.json` and `service-worker.js` enable installable app behavior and basic offline caching.
+
 ## Admin Customization
 `/api/admin` routes expose endpoints for SaaS‑level customization. The `PlatformCustomizer` React component connects to these APIs.
 

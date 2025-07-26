@@ -18,6 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^1.4.5-lts.1",
+    "express-rate-limit": "^7.0.0",
+    "express-session": "^1.17.3",
     "prisma": "^5.2.0",
     "uuid": "^9.0.1"
   },
@@ -28,6 +30,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^1.4.7",
+    "@types/express-session": "^1.17.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
   }

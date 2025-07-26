@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, ShoppingBag, Heart, User, Filter, Star, 
   Crown, ArrowRight, Play, CheckCircle, Users, 
@@ -11,8 +11,22 @@ import { Badge } from './ui/badge';
 import { ProductCard } from './ProductCard';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  rating: number;
+  reviews: number;
+  seller: string;
+  isSponsored?: boolean;
+  modeledBy?: string;
+}
+
 export function Homepage() {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [products, setProducts] = useState<Product[]>([]);
 
   const categories = [
     { id: 'all', name: 'الكل', count: 1250 },
@@ -22,51 +36,12 @@ export function Homepage() {
     { id: 'home', name: 'منزل', count: 200 }
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: 'فستان سهرة ملكي',
-      price: 450,
-      originalPrice: 650,
-      image: 'https://images.unsplash.com/photo-1566479179817-c0e7e0d42e68?w=400&h=500&fit=crop',
-      rating: 4.8,
-      reviews: 156,
-      seller: 'بوتيك الأميرة',
-      isSponsored: true,
-      modeledBy: 'ريم الجميلة'
-    },
-    {
-      id: 2,
-      name: 'طقم مجوهرات ذهبي',
-      price: 1200,
-      image: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=400&h=500&fit=crop',
-      rating: 4.9,
-      reviews: 89,
-      seller: 'مجوهرات الملكة',
-      modeledBy: 'نورا الذهبية'
-    },
-    {
-      id: 3,
-      name: 'حقيبة يد فاخرة',
-      price: 850,
-      originalPrice: 1100,
-      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=500&fit=crop',
-      rating: 4.7,
-      reviews: 234,
-      seller: 'أناقة المرأة',
-      modeledBy: 'سارة الأنيقة'
-    },
-    {
-      id: 4,
-      name: 'عطر فرنسي راقي',
-      price: 320,
-      image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=500&fit=crop',
-      rating: 4.6,
-      reviews: 178,
-      seller: 'عطور باريس',
-      isSponsored: true
-    }
-  ];
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error('Failed to load products', err));
+  }, []);
 
   const featuredSellers = [
     {
