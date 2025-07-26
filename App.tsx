@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Homepage } from './components/Homepage';
 import { TajiraDashboard } from './components/TajiraDashboard';
 import { TajiraLandingPage } from './components/TajiraLandingPage';
+import { ModelLandingPage } from './components/ModelLandingPage';
 import { TajiraStore } from './components/TajiraStore';
 import { ModelDashboard } from './components/ModelDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -48,8 +49,7 @@ export default function App() {
           case 'tajira':
             return <TajiraLandingPage />;
           case 'model':
-            // TODO: Create ModelLandingPage in future
-            return <Homepage />; // For now, show regular homepage
+            return <ModelLandingPage />;
           default:
             return <Homepage />; // Regular shopping page for buyers
         }
