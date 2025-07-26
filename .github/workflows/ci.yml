@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [ work ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm ci --silent
+      - run: npm run lint --silent
+      - run: npm run build --silent
+      - run: npm test --silent

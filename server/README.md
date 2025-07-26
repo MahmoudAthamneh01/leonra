@@ -29,3 +29,9 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    ```bash
    npm run dev
    ```
+
+## Development
+
+- `npm run lint` runs ESLint with Prettier.
+- `npm test` runs Jest unit tests (configured with ts-jest).
+- CI runs these commands automatically via GitHub Actions.

@@ -21,7 +21,10 @@ export async function updateProduct(req: Request, res: Response) {
   if (req.file) {
     (data as any).imageUrl = `/uploads/${req.file.filename}`;
   }
-  const product = await prisma.product.update({ where: { id: Number(id) }, data });
+  const product = await prisma.product.update({
+    where: { id: Number(id) },
+    data,
+  });
   res.json(product);
 }
 

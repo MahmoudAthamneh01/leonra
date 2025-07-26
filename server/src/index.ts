@@ -17,11 +17,13 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'linora-secret',
-  resave: false,
-  saveUninitialized: false,
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'linora-secret',
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
 app.use(apiLimiter);
 app.use('/uploads', express.static('uploads'));
 app.use(morgan('dev'));
