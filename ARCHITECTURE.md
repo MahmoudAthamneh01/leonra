@@ -18,10 +18,12 @@ The frontend (React 18 + TypeScript) communicates with a Node.js/Express backend
 - `GET /api/users/me` – view profile.
 - `PUT /api/users/me` – update profile.
 - `GET /api/products` – list products.
+- `GET /api/products/:id` – product details.
 - `POST /api/products` – create product (tajira/admin).
 - `PUT /api/products/:id` – update product.
 - `DELETE /api/products/:id` – remove product.
 - `GET /api/orders` – list authenticated user orders.
+- `GET /api/orders/:id` – order details.
 - `POST /api/orders` – create order from cart.
 - `GET /api/admin/users` – admin user list.
 - `GET /api/admin/complaints` – complaint moderation.

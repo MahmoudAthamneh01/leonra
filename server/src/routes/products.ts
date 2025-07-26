@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../middleware/auth';
 import {
   listProducts,
+  getProduct,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -10,6 +11,7 @@ import { upload } from '../middleware/upload';
 
 const router = Router();
 router.get('/', listProducts);
+router.get('/:id', getProduct);
 router.post(
   '/',
   authenticate(['tajira', 'admin']),
