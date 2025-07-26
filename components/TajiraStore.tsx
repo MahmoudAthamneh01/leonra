@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, ShoppingCart, Heart, User, Menu, Star, 
   Filter, Grid, List, ChevronDown, Truck, Shield,
@@ -9,6 +9,20 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  rating: number;
+  reviews: number;
+  inStock: boolean;
+  category: string;
+  colors: string[];
+  sizes: string[];
+}
 
 export function TajiraStore() {
   const [cartItems, setCartItems] = useState(0);
@@ -55,83 +69,14 @@ export function TajiraStore() {
     { id: 'popular', name: 'الأكثر شعبية' }
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: 'فستان سهرة أنيق باللون الأسود',
-      price: 450,
-      originalPrice: 650,
-      image: 'https://images.unsplash.com/photo-1566479179817-c0e7e0d42e68?w=400&h=500&fit=crop',
-      rating: 4.8,
-      reviews: 67,
-      inStock: true,
-      category: 'dresses',
-      colors: ['أسود', 'كحلي', 'بورغندي'],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 2,
-      name: 'عباية كاجوال مع حزام جلدي',
-      price: 320,
-      image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&h=500&fit=crop',
-      rating: 4.7,
-      reviews: 43,
-      inStock: true,
-      category: 'abayas',
-      colors: ['أسود', 'بني', 'رمادي'],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 3,
-      name: 'طقم مجوهرات ذهب عيار 18',
-      price: 1200,
-      originalPrice: 1500,
-      image: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=400&h=500&fit=crop',
-      rating: 4.9,
-      reviews: 28,
-      inStock: true,
-      category: 'jewelry',
-      colors: ['ذهبي'],
-      sizes: ['مقاس واحد']
-    },
-    {
-      id: 4,
-      name: 'حقيبة يد جلد طبيعي',
-      price: 280,
-      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=500&fit=crop',
-      rating: 4.6,
-      reviews: 35,
-      inStock: false,
-      category: 'bags',
-      colors: ['أسود', 'بني', 'أحمر'],
-      sizes: ['مقاس واحد']
-    },
-    {
-      id: 5,
-      name: 'أقراط فضية مع الزركون',
-      price: 120,
-      image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=500&fit=crop',
-      rating: 4.5,
-      reviews: 52,
-      inStock: true,
-      category: 'accessories',
-      colors: ['فضي'],
-      sizes: ['مقاس واحد']
-    },
-    {
-      id: 6,
-      name: 'فستان يومي مريح',
-      price: 180,
-      originalPrice: 250,
-      image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=500&fit=crop',
-      rating: 4.4,
-      reviews: 78,
-      inStock: true,
-      category: 'dresses',
-      colors: ['أزرق', 'وردي', 'أخضر'],
-      sizes: ['S', 'M', 'L']
-    }
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error('Failed to load products', err));
+  }, []);
 
   const filteredProducts = products.filter(product => {
     const categoryMatch = activeCategory === 'all' || product.category === activeCategory;
