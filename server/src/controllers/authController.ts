@@ -6,9 +6,9 @@ import prisma from '../models/prisma';
 import { sendVerificationEmail } from '../utils/email';
 
 export async function register(req: Request, res: Response) {
-  const { email, password, role } = req.body;
+  const { email, password, role, phone } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({ data: { email, password: hashed, role } });
+  const user = await prisma.user.create({ data: { email, password: hashed, role, phone } });
   const token = uuid();
   await prisma.verificationToken.create({
     data: { token, userId: user.id, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) }
