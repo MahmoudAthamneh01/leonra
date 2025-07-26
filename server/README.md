@@ -29,3 +29,6 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    ```bash
    npm run dev
    ```
+
+**Note:** In production, make sure a Redis server is running and configured via
+the `REDIS_URL` environment variable for session storage.
