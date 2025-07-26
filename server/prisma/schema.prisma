@@ -8,14 +8,31 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  isVerified Boolean @default(false)
-  role     Role
-  products Product[]
-  orders   Order[]
-  models   ModelProfile[]
+  id                    Int                    @id @default(autoincrement())
+  email                 String                 @unique
+  password              String
+  name                  String
+  phone                 String?
+  isVerified            Boolean                @default(false)
+  role                  Role
+  avatar                String?
+  bio                   String?
+  isActive              Boolean                @default(true)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  
+  // علاقات
+  products              Product[]
+  orders                Order[]
+  complaints            Complaint[]
+  modelProfile          ModelProfile?
+  tajiraProfile         TajiraProfile?
+  verificationTokens    VerificationToken[]
+  passwordResetTokens   PasswordResetToken[]
+  cartItems             CartItem[]
+  reviews               Review[]
+  wishlistItems         WishlistItem[]
+  notifications         Notification[]
 }
 
 enum Role {
@@ -25,58 +42,304 @@ enum Role {
   admin
 }
 
-model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  imageUrl    String?
-  tajira      User     @relation(fields: [tajiraId], references: [id])
-  tajiraId    Int
-  orders      OrderItem[]
-}
-
-model Order {
-  id        Int         @id @default(autoincrement())
-  user      User        @relation(fields: [userId], references: [id])
-  userId    Int
-  createdAt DateTime    @default(now())
-  items     OrderItem[]
-  total     Float
-}
-
-model OrderItem {
-  id        Int      @id @default(autoincrement())
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  quantity  Int
-  price     Float
-}
-
-model Complaint {
-  id        Int      @id @default(autoincrement())
-  title     String
-  detail    String
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  status    String   @default("open")
-  createdAt DateTime @default(now())
+model TajiraProfile {
+  id            Int      @id @default(autoincrement())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int      @unique
+  shopName      String
+  shopDescription String?
+  shopLogo      String?
+  shopBanner    String?
+  isVerified    Boolean  @default(false)
+  totalSales    Float    @default(0)
+  commission    Float    @default(5) // نسبة العمولة
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model ModelProfile {
+  id            Int      @id @default(autoincrement())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int      @unique
+  portfolioImages String[]
+  specialties   String[] // تخصصات العارضة
+  hourlyRate    Float?
+  isVerified    Boolean  @default(false)
+  totalEarnings Float    @default(0)
+  rating        Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // علاقات
+  collaborations Collaboration[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  salePrice     Float?   // سعر الخصم
+  images        String[] // مصفوفة من الصور
+  category      String
+  subcategory   String?
+  brand         String?
+  sku           String?  @unique
+  quantity      Int      @default(0)
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  weight        Float?
+  dimensions    String?  // مثل "20x30x10"
+  
+  // معلومات البائع
+  tajira        User     @relation(fields: [tajiraId], references: [id])
+  tajiraId      Int
+  
+  // التواريخ
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // علاقات
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  collaborations Collaboration[]
+  
+  @@index([category])
+  @@index([tajiraId])
+  @@index([isActive])
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  nameAr      String   @unique
+  description String?
+  image       String?
+  isActive    Boolean  @default(true)
+  parentId    Int?     // للفئات الفرعية
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  orderNumber     String      @unique
+  user            User        @relation(fields: [userId], references: [id])
+  userId          Int
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String?
+  subtotal        Float
+  tax             Float       @default(0)
+  shippingCost    Float       @default(0)
+  total           Float
+  
+  // عنوان التوصيل
+  shippingAddress Json
+  billingAddress  Json?
+  
+  // ملاحظات
+  notes           String?
+  
+  // التواريخ
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  
+  // علاقات
+  items           OrderItem[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model OrderItem {
   id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  price     Float   // سعر المنتج وقت الشراء
+  total     Float   // price * quantity
+  
+  @@index([orderId])
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  bio       String?
-  avatarUrl String?
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, productId])
+}
+
+model WishlistItem {
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, productId])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  rating    Int      // من 1 إلى 5
+  comment   String?
+  isVerified Boolean @default(false) // هل المراجعة من مشتري حقيقي
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, productId])
+  @@index([productId])
+}
+
+model Collaboration {
+  id              Int               @id @default(autoincrement())
+  model           ModelProfile      @relation(fields: [modelId], references: [id])
+  modelId         Int
+  product         Product           @relation(fields: [productId], references: [id])
+  productId       Int
+  status          CollaborationStatus @default(PENDING)
+  commission      Float             // نسبة العمولة المتفق عليها
+  totalEarnings   Float             @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@index([modelId])
+  @@index([productId])
+}
+
+enum CollaborationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Complaint {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  type        ComplaintType
+  user        User           @relation(fields: [userId], references: [id])
+  userId      Int
+  status      ComplaintStatus @default(OPEN)
+  priority    Priority       @default(MEDIUM)
+  assignedTo  Int?           // معرف المشرف المكلف
+  resolution  String?        // الحل المقترح
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  resolvedAt  DateTime?
+  
+  @@index([userId])
+  @@index([status])
+}
+
+enum ComplaintType {
+  ORDER_ISSUE
+  PAYMENT_ISSUE
+  PRODUCT_QUALITY
+  DELIVERY_ISSUE
+  ACCOUNT_ISSUE
+  TECHNICAL_ISSUE
+  OTHER
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      Json?            // بيانات إضافية
+  createdAt DateTime         @default(now())
+  
+  @@index([userId, isRead])
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  PAYMENT_CONFIRM
+  COLLABORATION_REQUEST
+  PRODUCT_APPROVED
+  COMPLAINT_UPDATE
+  SYSTEM_NOTICE
 }
 
 model VerificationToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  expires   DateTime
+  id      Int      @id @default(autoincrement())
+  token   String   @unique
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  type    TokenType @default(EMAIL_VERIFICATION)
+  expires DateTime
+  
+  @@index([token])
+}
+
+model PasswordResetToken {
+  id      Int      @id @default(autoincrement())
+  token   String   @unique
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  expires DateTime
+  
+  @@index([token])
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
 }

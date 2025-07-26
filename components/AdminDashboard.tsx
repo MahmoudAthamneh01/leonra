@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Label } from './ui/label';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-export function AdminDashboard() {
+export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const stats = [
