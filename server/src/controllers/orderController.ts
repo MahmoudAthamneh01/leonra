@@ -7,7 +7,9 @@ export async function listOrders(req: Request, res: Response) {
 }
 
 export async function createOrder(req: Request, res: Response) {
-  const data = req.body;
-  const order = await prisma.order.create({ data: { ...data, userId: (req as any).user.id } });
+  const { status, paymentId, ...data } = req.body;
+  const order = await prisma.order.create({
+    data: { ...data, status, paymentId, userId: (req as any).user.id }
+  });
   res.json(order);
 }
