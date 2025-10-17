@@ -86,3 +86,6 @@ temp/
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript build info
+*.tsbuildinfo
