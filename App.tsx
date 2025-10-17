@@ -192,7 +192,7 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir="ltr">
       {isAuthenticated && currentPage !== 'customizer' && (
         <Header
           userType={userType}

@@ -42,13 +42,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://linora.sa',
     languages: {
-      'ar-SA': 'https://linora.sa',
-      'en-US': 'https://linora.sa/en',
+      'en-US': 'https://linora.sa',
+      'ar-SA': 'https://linora.sa/ar',
     },
   },
   openGraph: {
     type: 'website',
-    locale: 'ar_SA',
+    locale: 'en_US',
     url: 'https://linora.sa',
     title: 'منصة لينورا - Linora Platform',
     description: 'منصة التجارة الإلكترونية الرائدة للنساء في المملكة العربية السعودية',
@@ -77,7 +77,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ar" dir="rtl" className="scroll-smooth">
+    <html lang="en" dir="ltr" className="scroll-smooth">
       <head>
         <link 
           href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" 
