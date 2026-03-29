@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import { RedisStore } from 'connect-redis';
+import { createClient } from 'redis';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import productRoutes from './routes/products';
@@ -15,6 +18,28 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use(morgan('dev'));
+
+// Set up Redis client and session store
+const redisClient = createClient({
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
+  },
+  password: process.env.REDIS_PASSWORD || undefined,
+});
+
+redisClient.connect().catch(console.error);
+
+const redisStore = new RedisStore({ client: redisClient });
+
+app.use(
+  session({
+    store: redisStore,
+    secret: process.env.JWT_SECRET || 'secret',
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
