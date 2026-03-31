@@ -19,6 +19,7 @@ This folder contains the Node.js + Express backend using TypeScript and Prisma.
    DATABASE_URL=postgres://user:pass@localhost:5432/linora
    JWT_SECRET=supersecret
    EMAIL_FROM=no-reply@linora.com
+   REDIS_URL=redis://localhost:6379
    ```
 3. Generate Prisma client and migrate:
    ```bash
